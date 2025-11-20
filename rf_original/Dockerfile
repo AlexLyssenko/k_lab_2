@@ -6,7 +6,11 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+COPY model.py .
+RUN python model.py
+
 COPY app.py .
+COPY iris_model_org.pkl .
 
 ENV PORT=8001
 

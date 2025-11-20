@@ -1,23 +1,30 @@
-# service_a/app.py
 from fastapi import FastAPI
 from pydantic import BaseModel
+import joblib
+import numpy as np
 from typing import List
 
-app = FastAPI(title="rf_original")
+app = FastAPI(title="rf_cross_val_predictor")
 
-class Item(BaseModel):
-    id: int
-    name: str
-    value: float
 
-@app.get("/data", response_model=List[Item])
-def get_data():
-    # sample static data; could be from DB in real app
-    return [
-        {"id": 1, "name": "A-one", "value": 12.34},
-        {"id": 2, "name": "A-two", "value": 56.78}
-    ]
+model = joblib.load("iris_model_org.pkl")
+
+
+class PredictRequest(BaseModel):
+    features: List[float]
+
+
+class PredictResponse(BaseModel):
+    prediction: int
+
+
+@app.post("/predict", response_model=PredictResponse)
+def predict(req: PredictRequest):
+    arr = np.array(req.features).reshape(1, -1)
+    pred = int(model.predict(arr)[0])
+    return PredictResponse(prediction=pred)
+
 
 @app.get("/")
 def root():
-    return {"status": "rf_original running"}
+    return {"status": "model service running"}
