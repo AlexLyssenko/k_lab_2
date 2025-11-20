@@ -23,8 +23,8 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - rf_original=http://rf_original:8001/data
-      - rf_cross_val=http://rf_cross_val:8002/data
+      - rf_original=http://rf_original:8001/predict
+      - rf_cross_val=http://rf_cross_val:8002/predict
     depends_on:
       - rf_original
       - rf_cross_val
